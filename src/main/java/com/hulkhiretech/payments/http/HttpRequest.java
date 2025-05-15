@@ -10,7 +10,7 @@ public class HttpRequest {
 	
 	private String url;
 	private HttpHeaders headers;
-	private Object requestBody;
+	private Object requestBody ;
 	
 
 }

@@ -33,9 +33,16 @@ public class TokenService {
 	@Value("${paypal.oAuthurl}")
 	private String oAuthurl;
 	
-
-   
+	
+	
+	
     public String getToken() {
+    	
+	     
+		
+		//log.info("getToken called");
+		
+		//log.info("url is :" + oAuthurl);
     	
     	
     	//header object creation
@@ -62,7 +69,6 @@ public class TokenService {
         
         
         String accessToken = null;
-        
         try {
         	OAuthToken oAuthobj =objectMapper.readValue(responseBody, OAuthToken.class);
         	accessToken = oAuthobj.getAccessToken();
@@ -72,7 +78,7 @@ public class TokenService {
 			e.printStackTrace();
 		}
         log.info("Access Token inside TokenService class before return: " + accessToken);
-        return "AcessToken :" +accessToken;
+        return accessToken;
 
     }
 }
