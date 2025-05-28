@@ -6,7 +6,10 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class ErrorResponse {
-    private String code;
+    public ErrorResponse() {
+		// TODO Auto-generated constructor stub
+	}
+	private String code;
     private String message;
 
 

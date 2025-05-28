@@ -63,7 +63,7 @@ public class TokenService {
         httpRequest.setHeaders(headersobj);
         httpRequest.setRequestBody(formParams);
 
-        ResponseEntity<String> oAuthResponse = httpServiceEngine.makeHttCall(httpRequest);
+        ResponseEntity<String> oAuthResponse = httpServiceEngine.makeHttpCall(httpRequest);
         String responseBody = oAuthResponse.getBody();
         log.info("ResponseBody inside TokenService class : " + responseBody);
         

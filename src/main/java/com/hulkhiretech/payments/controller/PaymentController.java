@@ -41,8 +41,8 @@ public class PaymentController {
 	    
 	    if(orderId == null || orderId.isEmpty()) {
 	        log.error("Order ID is null or empty");
-	        throw new PaypalProviderException(ErrorCodeEnum.PAY.getCode(),
-	                ErrorCodeEnum.PAY.getMessage(),HttpStatus.BAD_REQUEST);
+	        throw new PaypalProviderException(ErrorCodeEnum.CLIENT_ERROR.getCode(),
+	                ErrorCodeEnum.CLIENT_ERROR.getMessage(),HttpStatus.BAD_REQUEST);
 	    }
 
 	    return paymentService.getOrder(orderId);

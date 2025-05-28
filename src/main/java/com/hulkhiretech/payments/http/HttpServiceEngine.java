@@ -16,57 +16,59 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class HttpServiceEngine {
 
+  
     private RestClient restClient;
+	public HttpServiceEngine(RestClient restClient) {
+		this.restClient = restClient;
+	}
 
-    public HttpServiceEngine(RestClient.Builder restClientBuilder) {
-        restClient = restClientBuilder.build();
-        log.info("restClient created|restClient:" + restClient);
-    }
 
-    public ResponseEntity<String> makeHttCall(HttpRequest httpRequest) {
+    public ResponseEntity<String> makeHttpCall(HttpRequest httpRequest) {
         try {
-            log.info("Inside HttpServiceEngine class makeHttCall() method is called and the request is : " + httpRequest);
+            log.info("Inside HttpServiceEngine.makeHttpCall() | Request: {}", httpRequest);
 
             ResponseEntity<String> responseEntity = restClient.method(httpRequest.getHttpmethod())
                     .uri(httpRequest.getUrl())
-                    .headers(httpHeader -> httpHeader.addAll(httpRequest.getHeaders()))
+                    .headers(httpHeaders -> httpHeaders.addAll(httpRequest.getHeaders()))
                     .body(httpRequest.getRequestBody())
                     .retrieve()
                     .toEntity(String.class);
 
-            log.info("ResponseEntity inside HttpServiceEngine class : " + responseEntity);
+            log.info("ResponseEntity from PayPal: {}", responseEntity);
             return responseEntity;
 
         } catch (HttpServerErrorException | HttpClientErrorException e) {
-            log.error("HTTP error occurred: {}", e.getStatusCode(), e);
+            HttpStatus status = (HttpStatus) e.getStatusCode();
+            log.error("HTTP error occurred | StatusCode: {}", status);
 
-            // Get the status code
-            HttpStatus status = HttpStatus.valueOf(e.getStatusCode().value());
-
-            // Check if it's a 4xx or 5xx error
-            if (status.is4xxClientError() || status.is5xxServerError()) {
-                log.error("4xx or 5xx error occurred: {}", status);
-
-                // Throw a generic PaypalProviderException for testing purposes
+            if (status.is5xxServerError()) {
+                log.error("5xx server error occurred: {}", status);
                 throw new PaypalProviderException(
                         ErrorCodeEnum.UNABLE_TO_CONNECT_PAYPAL.getCode(),
                         ErrorCodeEnum.UNABLE_TO_CONNECT_PAYPAL.getMessage(),
-                        status);
+                        status
+                );
+            } else if (status.is4xxClientError()) {
+                log.error("4xx client error occurred: {}", status);
+                throw new PaypalProviderException(
+                        ErrorCodeEnum.RESOURCE_NOT_FOUND.getCode(),  // Make sure this exists in your ErrorCodeEnum
+                        ErrorCodeEnum.RESOURCE_NOT_FOUND.getMessage(),
+                        status
+                );
             }
 
-            // Handle other scenarios (if necessary)
             throw new PaypalProviderException(
                     ErrorCodeEnum.GENERIC_ERROR.getCode(),
                     ErrorCodeEnum.GENERIC_ERROR.getMessage(),
-                    status);
+                    status
+            );
         } catch (Exception e) {
-            log.error("Exception occurred while making HTTP call: {}", e.getMessage(), e);
-
-            // Catch any unexpected exceptions and throw a custom exception
+            log.error("Unexpectedlll exception during HTTP call");
             throw new PaypalProviderException(
                     ErrorCodeEnum.GENERIC_ERROR.getCode(),
                     ErrorCodeEnum.GENERIC_ERROR.getMessage(),
-                    HttpStatus.SERVICE_UNAVAILABLE);
+                    HttpStatus.SERVICE_UNAVAILABLE
+            );
         }
     }
 }

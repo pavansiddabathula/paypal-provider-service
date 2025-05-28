@@ -1,7 +1,9 @@
 package com.hulkhiretech.payments.service.helper;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -15,8 +17,12 @@ import com.hulkhiretech.payments.paypal.req.ExperienceContext;
 import com.hulkhiretech.payments.paypal.req.PaymentSource;
 import com.hulkhiretech.payments.paypal.req.Paypal;
 import com.hulkhiretech.payments.paypal.req.PurchaseUnit;
+import com.hulkhiretech.payments.paypal.res.CreatOrderRes;
+import com.hulkhiretech.payments.paypal.res.Link;
 import com.hulkhiretech.payments.pojo.CreateOrderReq;
-import com.hulkhiretech.payments.util.JsonUtil;
+import com.hulkhiretech.payments.pojo.OrderRes;
+import com.hulkhiretech.payments.utils.JsonUtil;
+
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -103,6 +109,27 @@ public class CreateOrderHelper {
         return httpRequest;
 		
 	}
+	public OrderRes buildOrderRes(CreatOrderRes resObj) {
+	    OrderRes orderRes = new OrderRes();
+
+	    orderRes.setOrderId(resObj.getId());
+	    orderRes.setPaypalStatus(resObj.getStatus());
+
+	    if (resObj.getLinks() != null) {
+	        Optional<String> redirectUrl = resObj.getLinks().stream()
+	            .filter(link -> "payer-action".equalsIgnoreCase(link.getRel()))
+	            .map(Link::getHref)
+	            .findFirst();
+
+	        orderRes.setRedirectUrl(redirectUrl.orElse(null));
+	    } else {
+	        orderRes.setRedirectUrl(null);
+	    }
+
+	    log.info("OrderRes built from PayPal response: {}", orderRes);
+	    return orderRes;
+	}
+
 
 	
 

@@ -15,11 +15,11 @@ public class PaypalProviderException extends RuntimeException {
 	private final String errorMessage;
 	
 	private final HttpStatus httpStatus;
-	public PaypalProviderException(String errorCode, String message,HttpStatus httpStatus) {
+	public PaypalProviderException(String errorCode, String message,HttpStatus httpStatusCode) {
 		super(message);
 		this.errorCode = errorCode;
 		this.errorMessage = message;
-		this.httpStatus = httpStatus;
+		this.httpStatus = httpStatusCode;
 	}
 	
 	  // getter for errorCode

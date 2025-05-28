@@ -1,4 +1,4 @@
-package com.hulkhiretech.payments.util;
+package com.hulkhiretech.payments.utils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
