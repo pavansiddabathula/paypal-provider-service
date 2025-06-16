@@ -43,13 +43,17 @@ public class HttpServiceEngine {
 
             if (status.is5xxServerError()) {
                 log.error("5xx server error occurred: {}", status);
-                throw new PaypalProviderException(
-                        ErrorCodeEnum.UNABLE_TO_CONNECT_PAYPAL.getCode(),
-                        ErrorCodeEnum.UNABLE_TO_CONNECT_PAYPAL.getMessage(),
-                        status
+               // throw new PaypalProviderException(
+                //        ErrorCodeEnum.UNABLE_TO_CONNECT_PAYPAL.getCode(),
+                 //       ErrorCodeEnum.UNABLE_TO_CONNECT_PAYPAL.getMessage(),
+                 //
+                //status
+                throw new RuntimeException(
+						"Unable to connect to PayPal. Please try again later.",
+						e
                 );
             } else if (status.is4xxClientError()) {
-                log.error("4xx client error occurred: {}", status);
+                log.error("4xx client error occurred:: {}", status);
                 throw new PaypalProviderException(
                         ErrorCodeEnum.RESOURCE_NOT_FOUND.getCode(),  // Make sure this exists in your ErrorCodeEnum
                         ErrorCodeEnum.RESOURCE_NOT_FOUND.getMessage(),
